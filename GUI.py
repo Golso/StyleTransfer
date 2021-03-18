@@ -1,8 +1,7 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 from PIL import ImageTk, Image
 from UtilsFunctions import create_model, load_model
-
 
 GUI_BACKGROUND_PATH = "./images/StarryNightBackground.jpg"
 path_to_model = "./models/modelVanGogh.tf"
@@ -20,7 +19,8 @@ class GUI(tk.Frame):
     def __init__(self, window=None):
         tk.Frame.__init__(self, window)
         height, width = 700, 1200
-        self.path = ""
+        self.content_img_path = None
+        self.stylised_img = None
         self.style_img = load_and_resize_img(DEFAULT_STYLE_PATH)
         self.model = load_model(path_to_model)
         self.canvas = tk.Canvas(window, height=height, width=width)
@@ -54,21 +54,37 @@ class GUI(tk.Frame):
         self.transfer_button = tk.Button(self.right_frame, text="Transfer", font=10, command=self.transfer_img)
         self.transfer_button.place(relx=0.25, rely=0.75, relwidth=0.5, relheight=0.1)
 
-        self.save_button = tk.Button(self.right_frame, text="Save", font=10)
+        self.save_button = tk.Button(self.right_frame, text="Save", font=10, command=self.save_img)
         self.save_button.place(relx=0.25, rely=0.88, relwidth=0.5, relheight=0.1)
 
     def choose_img(self):
-        self.path = filedialog.askopenfilename(initialdir="/", title="Select content image",
-                                               filetypes=[("jpeg files", "*.jpg")])
-        img = load_and_resize_img(self.path)
-        self.img_content_label.configure(image=img)
-        self.img_content_label.image = img
+        try:
+            self.content_img_path = filedialog.askopenfilename(initialdir="/", title="Select content image",
+                                                               filetypes=[("jpeg files", "*.jpg")])
+            img = load_and_resize_img(self.content_img_path)
+            self.img_content_label.configure(image=img)
+            self.img_content_label.image = img
+        except:
+            self.content_img_path = None
+            messagebox.showinfo(title="Wrong file", message="Choose file with jpg format.")
 
     def transfer_img(self):
-        img = create_model(self.path, self.model)
-        img = ImageTk.PhotoImage(image=img)
-        self.img_content_label.configure(image=img)
-        self.img_content_label.image = img
+        if self.content_img_path:
+            self.stylised_img = create_model(self.content_img_path, self.model)
+            img = ImageTk.PhotoImage(image=self.stylised_img)
+            self.img_content_label.configure(image=img)
+            self.img_content_label.image = img
+        else:
+            return
+
+    def save_img(self):
+        if self.stylised_img:
+            img = self.stylised_img.filename = filedialog.asksaveasfilename(initialdir="/", title="Select file",
+                                                                            defaultextension='*.jpg', filetypes=(
+                    ('JPEG', ('*.jpg', '*.jpeg')), ('PNG', '*.png')))
+            self.stylised_img.save(img)
+        else:
+            return
 
 
 root = tk.Tk()
