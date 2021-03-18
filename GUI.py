@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 from PIL import ImageTk, Image
 from UtilsFunctions import create_model, load_model
 
@@ -30,16 +31,13 @@ class GUI(tk.Frame):
         self.background_label.place(relwidth=1, relheight=1)
 
         self.frame = tk.Frame(window, bg="#80c1ff", bd=5)
-        self.frame.place(relx=0.25, rely=0.05, relwidth=0.4, relheight=0.05, anchor="n")
+        self.frame.place(relx=0.25, rely=0.05, relwidth=0.3, relheight=0.1, anchor="n")
 
-        self.entry = tk.Entry(self.frame, font=10)
-        self.entry.place(relwidth=0.65, relheight=1)
-
-        self.search_button = tk.Button(self.frame, text="Search", font=10, command=self.choose_img)
-        self.search_button.place(relx=0.7, relwidth=0.3, relheight=1)
+        self.search_button = tk.Button(self.frame, text="Choose content image", font=10, command=self.choose_img)
+        self.search_button.place(relwidth=1, relheight=1)
 
         self.lower_frame = tk.Frame(window, bg="#80c1ff", bd=5)
-        self.lower_frame.place(relx=0.25, rely=0.15, relwidth=0.4, relheight=0.7, anchor="n")
+        self.lower_frame.place(relx=0.25, rely=0.25, relwidth=0.4, relheight=0.7, anchor="n")
 
         self.menu_button = tk.Menubutton(self.lower_frame, text="Choose style")
         self.menu_button.place(relwidth=1, relheight=0.1)
@@ -54,13 +52,14 @@ class GUI(tk.Frame):
         self.img_content_label.place(relwidth=1, relheight=0.7)
 
         self.transfer_button = tk.Button(self.right_frame, text="Transfer", font=10, command=self.transfer_img)
-        self.transfer_button.place(relx=0.25, rely=0.72, relwidth=0.5, relheight=0.1)
+        self.transfer_button.place(relx=0.25, rely=0.75, relwidth=0.5, relheight=0.1)
 
         self.save_button = tk.Button(self.right_frame, text="Save", font=10)
-        self.save_button.place(relx=0.25, rely=0.85, relwidth=0.5, relheight=0.1)
+        self.save_button.place(relx=0.25, rely=0.88, relwidth=0.5, relheight=0.1)
 
     def choose_img(self):
-        self.path = "./images/but.jpg"
+        self.path = filedialog.askopenfilename(initialdir="/", title="Select content image",
+                                               filetypes=[("jpeg files", "*.jpg")])
         img = load_and_resize_img(self.path)
         self.img_content_label.configure(image=img)
         self.img_content_label.image = img

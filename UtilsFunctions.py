@@ -29,9 +29,14 @@ def clip_0_1(image):
     return tf.clip_by_value(image, clip_value_min=0.0, clip_value_max=1.0)
 
 
-def create_model(img_path, model_path):
+def load_model(model_path):
     model = tf.keras.models.load_model(model_path)
+    return model
+
+
+def create_model(img_path, model):
     img = load_img(img_path, True, 600)
     img = model(img)
     img = clip_0_1(img)
+    img = tensor_to_image(img)
     return img
