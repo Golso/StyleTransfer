@@ -6,11 +6,12 @@ from UtilsFunctions import create_model, load_model
 GUI_BACKGROUND_PATH = "./images/StarryNightBackground.jpg"
 path_to_model = "./models/modelVanGogh.tf"
 DEFAULT_STYLE_PATH = "./images/starryNightStyle.jpg"
+MUSE_STYLE_PATH = "./images/muse.jpg"
 
 
-def load_and_resize_img(path):
+def load_and_resize_img(path, size):
     img = Image.open(path)
-    img = img.resize((600, 600), Image.ANTIALIAS)
+    img = img.resize((size, size), Image.ANTIALIAS)
     img = ImageTk.PhotoImage(img)
     return img
 
@@ -20,8 +21,9 @@ class GUI(tk.Frame):
         tk.Frame.__init__(self, window)
         height, width = 700, 1200
         self.content_img_path = None
+        self.style_img_path = DEFAULT_STYLE_PATH
         self.stylised_img = None
-        self.style_img = load_and_resize_img(DEFAULT_STYLE_PATH)
+        self.style_img = load_and_resize_img(DEFAULT_STYLE_PATH, 600)
         self.model = load_model(path_to_model)
         self.canvas = tk.Canvas(window, height=height, width=width)
         self.canvas.pack()
@@ -30,38 +32,47 @@ class GUI(tk.Frame):
         self.background_label = tk.Label(window, image=self.background_image)
         self.background_label.place(relwidth=1, relheight=1)
 
-        self.frame = tk.Frame(window, bg="#80c1ff", bd=5)
-        self.frame.place(relx=0.25, rely=0.05, relwidth=0.3, relheight=0.1, anchor="n")
+        self.left_frame = tk.Frame(window, bg="#80c1ff", bd=5)
+        self.left_frame.place(relx=0.25, rely=0.05, relwidth=0.4, relheight=0.9, anchor="n")
 
-        self.search_button = tk.Button(self.frame, text="Choose content image", font=10, command=self.choose_img)
-        self.search_button.place(relwidth=1, relheight=1)
+        self.bg_img_style_button1 = load_and_resize_img(DEFAULT_STYLE_PATH, 150)
+        self.choose_style_button1 = tk.Button(self.left_frame, image=self.bg_img_style_button1,
+                                              font=10, command=lambda: self.change_style("Starry night"))
+        self.choose_style_button1.place(relwidth=0.3, relheight=0.18)
 
-        self.lower_frame = tk.Frame(window, bg="#80c1ff", bd=5)
-        self.lower_frame.place(relx=0.25, rely=0.25, relwidth=0.4, relheight=0.7, anchor="n")
+        self.bg_img_style_button2 = load_and_resize_img(MUSE_STYLE_PATH, 150)
+        self.choose_style_button2 = tk.Button(self.left_frame, image=self.bg_img_style_button2, font=10,
+                                              command=lambda: self.change_style("Muse"))
+        self.choose_style_button2.place(relx=0.35, relwidth=0.3, relheight=0.18)
 
-        self.menu_button = tk.Menubutton(self.lower_frame, text="Choose style")
-        self.menu_button.place(relwidth=1, relheight=0.1)
+        self.bg_img_style_button3 = load_and_resize_img(MUSE_STYLE_PATH, 150)
+        self.choose_style_button3 = tk.Button(self.left_frame, image=self.bg_img_style_button3, font=10,
+                                              command=lambda: self.change_style("Muse"))
+        self.choose_style_button3.place(relx=0.70, relwidth=0.3, relheight=0.18)
 
-        self.img_style_label = tk.Label(self.lower_frame, image=self.style_img)
-        self.img_style_label.place(rely=0.15, relwidth=1, relheight=0.8)
+        self.img_style_label = tk.Label(self.left_frame, image=self.style_img)
+        self.img_style_label.place(rely=0.2, relwidth=1, relheight=0.8)
 
         self.right_frame = tk.Frame(window, bg="#80c1ff", bd=5)
-        self.right_frame.place(relx=0.75, rely=0.05, relwidth=0.4, relheight=0.9, anchor="n")
+        self.right_frame.place(relx=0.76, rely=0.05, relwidth=0.4, relheight=0.9, anchor="n")
 
         self.img_content_label = tk.Label(self.right_frame)
-        self.img_content_label.place(relwidth=1, relheight=0.7)
+        self.img_content_label.place(relwidth=1, relheight=0.75)
+
+        self.search_button = tk.Button(self.right_frame, text="Choose content image", font=10, command=self.choose_img)
+        self.search_button.place(rely=0.78, relwidth=1, relheight=0.1)
 
         self.transfer_button = tk.Button(self.right_frame, text="Transfer", font=10, command=self.transfer_img)
-        self.transfer_button.place(relx=0.25, rely=0.75, relwidth=0.5, relheight=0.1)
+        self.transfer_button.place(rely=0.9, relwidth=0.45, relheight=0.1)
 
         self.save_button = tk.Button(self.right_frame, text="Save", font=10, command=self.save_img)
-        self.save_button.place(relx=0.25, rely=0.88, relwidth=0.5, relheight=0.1)
+        self.save_button.place(relx=0.55, rely=0.9, relwidth=0.45, relheight=0.1)
 
     def choose_img(self):
         try:
             self.content_img_path = filedialog.askopenfilename(initialdir="/", title="Select content image",
                                                                filetypes=[("jpeg files", "*.jpg")])
-            img = load_and_resize_img(self.content_img_path)
+            img = load_and_resize_img(self.content_img_path, 600)
             self.img_content_label.configure(image=img)
             self.img_content_label.image = img
         except:
@@ -85,6 +96,22 @@ class GUI(tk.Frame):
             self.stylised_img.save(img)
         else:
             return
+
+    def change_style(self, style):
+        if style == "Starry night":
+            self.style_img_path = DEFAULT_STYLE_PATH
+            self.change_style_background()
+        elif style == "Muse":
+            self.style_img_path = "./images/muse.jpg"
+            self.change_style_background()
+        else:
+            self.style_img_path = "./images/muse.jpg"
+            self.change_style_background()
+
+    def change_style_background(self):
+        self.style_img = load_and_resize_img(self.style_img_path, 600)
+        self.img_style_label.configure(image=self.style_img)
+        self.img_style_label.image = self.style_img
 
 
 root = tk.Tk()
