@@ -4,9 +4,12 @@ from PIL import ImageTk, Image
 from UtilsFunctions import create_model, load_model
 
 GUI_BACKGROUND_PATH = "./images/StarryNightBackground.jpg"
-path_to_model = "./models/modelVanGogh.tf"
+PATH_TO_MODEL_GOGH = "./models/modelVanGogh.tf"
+PATH_TO_MODEL_PICASSO = "./models/modelPicasso.tf"
 DEFAULT_STYLE_PATH = "./images/starryNightStyle.jpg"
 MUSE_STYLE_PATH = "./images/muse.jpg"
+MODEL_GOGH = load_model(PATH_TO_MODEL_GOGH)
+MODEL_PICASSO = load_model(PATH_TO_MODEL_PICASSO)
 
 
 def load_and_resize_img(path, size):
@@ -19,12 +22,18 @@ def load_and_resize_img(path, size):
 class GUI(tk.Frame):
     def __init__(self, window=None):
         tk.Frame.__init__(self, window)
+        window.maxsize(1550, 800)
+        window.minsize(1000, 600)
+        window.title("DeepTransfer")
+        logo = ImageTk.PhotoImage(file='./images/VanGoghLogo.jpg')
+        window.iconphoto(False, logo)
         height, width = 700, 1200
         self.content_img_path = None
         self.style_img_path = DEFAULT_STYLE_PATH
         self.stylised_img = None
+        self.path_to_model = PATH_TO_MODEL_GOGH
         self.style_img = load_and_resize_img(DEFAULT_STYLE_PATH, 600)
-        self.model = load_model(path_to_model)
+        self.model = MODEL_GOGH
         self.canvas = tk.Canvas(window, height=height, width=width)
         self.canvas.pack()
 
@@ -70,19 +79,21 @@ class GUI(tk.Frame):
 
     def choose_img(self):
         try:
-            self.content_img_path = filedialog.askopenfilename(initialdir="/", title="Select content image",
+            img_path = filedialog.askopenfilename(initialdir="/", title="Select content image",
                                                                filetypes=[("jpeg files", "*.jpg")])
-            img = load_and_resize_img(self.content_img_path, 600)
+            img = load_and_resize_img(img_path, 600)
             self.img_content_label.configure(image=img)
             self.img_content_label.image = img
+            self.content_img_path = img_path
         except:
-            self.content_img_path = None
             messagebox.showinfo(title="Wrong file", message="Choose file with jpg format.")
 
     def transfer_img(self):
         if self.content_img_path:
             self.stylised_img = create_model(self.content_img_path, self.model)
-            img = ImageTk.PhotoImage(image=self.stylised_img)
+            img = self.stylised_img
+            img = img.resize((600, 600), Image.ANTIALIAS)
+            img = ImageTk.PhotoImage(image=img)
             self.img_content_label.configure(image=img)
             self.img_content_label.image = img
         else:
@@ -101,12 +112,18 @@ class GUI(tk.Frame):
         if style == "Starry night":
             self.style_img_path = DEFAULT_STYLE_PATH
             self.change_style_background()
+            self.path_to_model = PATH_TO_MODEL_GOGH
+            self.model = MODEL_GOGH
         elif style == "Muse":
             self.style_img_path = "./images/muse.jpg"
             self.change_style_background()
+            self.path_to_model = PATH_TO_MODEL_PICASSO
+            self.model = MODEL_PICASSO
         else:
             self.style_img_path = "./images/muse.jpg"
             self.change_style_background()
+            self.path_to_model = PATH_TO_MODEL_PICASSO
+            self.model = MODEL_PICASSO
 
     def change_style_background(self):
         self.style_img = load_and_resize_img(self.style_img_path, 600)

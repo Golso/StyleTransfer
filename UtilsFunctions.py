@@ -35,7 +35,7 @@ def load_model(model_path):
 
 
 def create_model(img_path, model):
-    img = load_img(img_path, True, 600)
+    img = load_img(img_path, True, 1000)
     img = model(img)
     img = clip_0_1(img)
     img = tensor_to_image(img)
