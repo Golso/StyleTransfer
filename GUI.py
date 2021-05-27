@@ -3,16 +3,20 @@ from tkinter import filedialog, messagebox
 from PIL import ImageTk, Image
 from UtilsFunctions import create_model, load_model
 
-GUI_BACKGROUND_PATH = "./images/StarryNightBackground.jpg"
-PATH_TO_MODEL_GOGH = "./models/modelVanGogh.tf"
-PATH_TO_MODEL_PICASSO = "./models/modelPicasso.tf"
-PATH_TO_MODEL_TRIANGLE = "./models/modelTriangle.tf"
-DEFAULT_STYLE_PATH = "./images/starryNightStyle.jpg"
-MUSE_STYLE_PATH = "./images/muse.jpg"
-TRIANGLE_STYLE_PATH = "./images/triangle.jpg"
+GUI_BACKGROUND_PATH = "resources/images/StarryNightBackground.jpg"
+
+PATH_TO_MODEL_GOGH = "resources/models/modelVanGogh.tf"
+PATH_TO_MODEL_SOUND = "resources/models/modelSound.tf"
+PATH_TO_MODEL_PAINT = "resources/models/modelPaint.tf"
+
+DEFAULT_STYLE_PATH = "resources/images/starryNightStyle.jpg"
+SOUND_STYLE_PATH = "resources/images/sound.jpg"
+PAINTING_STYLE_PATH = "resources/images/painting.jpg"
+
 MODEL_GOGH = load_model(PATH_TO_MODEL_GOGH)
-MODEL_PICASSO = load_model(PATH_TO_MODEL_PICASSO)
-MODEL_TRIANGLE = load_model(PATH_TO_MODEL_TRIANGLE)
+MODEL_SOUND = load_model(PATH_TO_MODEL_SOUND)
+MODEL_PAINTING = load_model(PATH_TO_MODEL_PAINT)
+
 WIDTH = 1200
 HEIGHT = 700
 
@@ -30,7 +34,7 @@ class GUI(tk.Frame):
         window.maxsize(1550, 800)
         window.minsize(1000, 600)
         window.title("DeepTransfer")
-        logo = ImageTk.PhotoImage(file='./images/VanGoghLogo.jpg')
+        logo = ImageTk.PhotoImage(file='resources/images/VanGoghLogo.jpg')
         window.iconphoto(False, logo)
         self.content_img_path = None
         self.style_img_path = DEFAULT_STYLE_PATH
@@ -53,14 +57,14 @@ class GUI(tk.Frame):
                                               font=10, command=lambda: self.change_style("Starry night"))
         self.choose_style_button1.place(relwidth=0.3, relheight=0.18)
 
-        self.bg_img_style_button2 = load_and_resize_img(MUSE_STYLE_PATH, 150)
+        self.bg_img_style_button2 = load_and_resize_img(SOUND_STYLE_PATH, 150)
         self.choose_style_button2 = tk.Button(self.left_frame, image=self.bg_img_style_button2, font=10,
-                                              command=lambda: self.change_style("Muse"))
+                                              command=lambda: self.change_style("Sound"))
         self.choose_style_button2.place(relx=0.35, relwidth=0.3, relheight=0.18)
 
-        self.bg_img_style_button3 = load_and_resize_img(TRIANGLE_STYLE_PATH, 150)
+        self.bg_img_style_button3 = load_and_resize_img(PAINTING_STYLE_PATH, 150)
         self.choose_style_button3 = tk.Button(self.left_frame, image=self.bg_img_style_button3, font=10,
-                                              command=lambda: self.change_style("Triangle"))
+                                              command=lambda: self.change_style("Painting"))
         self.choose_style_button3.place(relx=0.70, relwidth=0.3, relheight=0.18)
 
         self.img_style_label = tk.Label(self.left_frame, image=self.style_img)
@@ -121,25 +125,18 @@ class GUI(tk.Frame):
             self.change_style_background()
             self.path_to_model = PATH_TO_MODEL_GOGH
             self.model = MODEL_GOGH
-        elif style == "Muse":
-            self.style_img_path = "./images/muse.jpg"
+        elif style == "Sound":
+            self.style_img_path = "resources/images/sound.jpg"
             self.change_style_background()
-            self.path_to_model = PATH_TO_MODEL_PICASSO
-            self.model = MODEL_PICASSO
+            self.path_to_model = PATH_TO_MODEL_SOUND
+            self.model = MODEL_SOUND
         else:
-            self.style_img_path = "./images/triangle.jpg"
+            self.style_img_path = "resources/images/painting.jpg"
             self.change_style_background()
-            self.path_to_model = PATH_TO_MODEL_TRIANGLE
-            self.model = MODEL_TRIANGLE
+            self.path_to_model = PATH_TO_MODEL_PAINT
+            self.model = MODEL_PAINTING
 
     def change_style_background(self):
         self.style_img = load_and_resize_img(self.style_img_path, 600)
         self.img_style_label.configure(image=self.style_img)
         self.img_style_label.image = self.style_img
-
-
-root = tk.Tk()
-app = GUI(window=root)
-root.geometry("%dx%d" % (WIDTH, HEIGHT))
-root.eval('tk::PlaceWindow %s center' % root.winfo_toplevel())
-app.mainloop()

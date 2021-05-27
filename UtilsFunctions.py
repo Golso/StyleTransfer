@@ -30,7 +30,7 @@ def clip_0_1(image):
 
 
 def load_model(model_path):
-    model = tf.keras.models.load_model(model_path)
+    model = tf.keras.models.load_model(model_path, compile=False)
     return model
 
 
