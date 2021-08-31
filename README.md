@@ -17,6 +17,7 @@ Simple image conversion app created with Python
 ![examplesOfTransfer](https://user-images.githubusercontent.com/36167926/131230806-dda4b4ca-2f9b-4810-86c4-0c392f62cda0.png)
 # Sources
 This app is inspired by:
+* "A Neural Algorithm of Artistic Style" by Leon A. Gatys, Alexander S. Ecker, Matthias Bethge (https://arxiv.org/pdf/1508.06576.pdf)
 * "Perceptual Losses for Real-Time Style Transfer
 and Super-Resolution" by Justin Johnson, Alexandre Alahi and Li Fei-Fei (https://arxiv.org/pdf/1603.08155.pdf)
 * TensorFlow Neural Style Transfer tutorial (https://www.tensorflow.org/tutorials/generative/style_transfer)
