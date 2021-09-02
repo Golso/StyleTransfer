@@ -6,8 +6,7 @@ Simple image conversion app created with Python
 * [Example of trained models](#example-of-trained-models)
 * [Sources](#sources)
 # General info
-![beforeTransfer](https://user-images.githubusercontent.com/36167926/131230832-e5edfc2e-6efc-41c3-8af0-94e9272a22fc.JPG)
-![ScrnProgramu](https://user-images.githubusercontent.com/36167926/131230829-eb5dc6bd-5b24-4ff5-a7f2-401eb109eda3.JPG)
+![DeepAnimation](https://user-images.githubusercontent.com/36167926/131871088-2422205e-d3d6-4174-b7bf-cb9dc4ca3be3.gif)
 # Technologies
 * Python 3
 * TensorFlow 2.5.0
